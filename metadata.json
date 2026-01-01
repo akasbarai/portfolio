@@ -1,0 +1,8 @@
+{
+  "name": "Akash Prasad Barai Portfolio",
+  "description": "A high-end, responsive portfolio for a BSc. CSIT student featuring project highlights, technical skills, and a built-in Gemini-powered AI assistant.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}
