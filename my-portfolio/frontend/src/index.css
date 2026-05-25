@@ -1,0 +1,51 @@
+@import "tailwindcss";
+
+@layer utilities {
+  .bg-neu-bg {
+    background-color: #EBF2FA;
+  }
+  .shadow-neu-out {
+    box-shadow: 9px 9px 20px #cbd6e2, -9px -9px 20px #ffffff;
+  }
+  .shadow-neu-out-sm {
+    box-shadow: 5px 5px 12px #d0dbec, -5px -5px 12px #ffffff;
+  }
+  .shadow-neu-in {
+    box-shadow: inset 6px 6px 12px #cbd6e2, inset -6px -6px 12px #ffffff;
+  }
+  .shadow-neu-in-sm {
+    box-shadow: inset 3px 3px 6px #cbd6e2, inset -3px -3px 6px #ffffff;
+  }
+  .shadow-neu-button {
+    box-shadow: 4px 4px 10px #cbd6e2, -4px -4px 10px #ffffff;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .shadow-neu-button:hover {
+    box-shadow: 6px 6px 14px #cbd6e2, -6px -6px 14px #ffffff;
+    transform: translateY(-1px);
+  }
+  .shadow-neu-button:active {
+    box-shadow: inset 3px 3px 6px #cbd6e2, inset -3px -3px 6px #ffffff;
+    transform: translateY(1px);
+  }
+  .shadow-neu-toggle-active {
+    box-shadow: inset 4px 4px 8px #cbd6e2, inset -4px -4px 8px #ffffff;
+  }
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #EBF2FA;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd6e2;
+  border-radius: 9999px;
+  border: 2px solid #EBF2FA;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #aab8c9;
+}

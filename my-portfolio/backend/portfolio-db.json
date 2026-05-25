@@ -1,0 +1,156 @@
+{
+  "profile": {
+    "name": "Akash Prasad Barai",
+    "title": "Full-Stack Developer, UI/UX Designer & Astrology Portal Builder",
+    "bio": "Building modern web experiences, owner-editable CMS workflows, and practical AI-assisted tools from Lumbini, Nepal.",
+    "avatarUrl": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80",
+    "aboutText": "Hello! I am Akash Prasad Barai, a developer focused on responsive portfolio systems, CMS dashboards, clean UI/UX, and server-side AI integrations. I enjoy building interfaces that feel polished while staying useful, editable, and secure for real workflows.",
+    "skills": [
+      "TypeScript",
+      "React",
+      "Node.js",
+      "Express",
+      "Tailwind CSS",
+      "Google GenAI SDK",
+      "Python",
+      "Figma",
+      "Responsive Design",
+      "Astrology Portal Systems"
+    ],
+    "socialLinks": {
+      "github": "https://github.com",
+      "linkedin": "https://linkedin.com",
+      "twitter": "https://twitter.com",
+      "email": "akasbarai560@gmail.com"
+    }
+  },
+  "projects": [
+    {
+      "id": "proj-1",
+      "title": "Personal Portfolio CMS",
+      "category": "Full-Stack Web App",
+      "description": "A responsive portfolio with an owner-only CMS, image uploads, SEO controls, and server-side AI writing helpers.",
+      "longDescription": "This portfolio CMS combines a polished public site with a protected editing console for projects, blogs, profile content, and media assets. The backend keeps Gemini calls server-side, signs owner sessions, validates requests, and persists local content safely for development workflows.",
+      "techStack": [
+        "React",
+        "Express",
+        "Gemini API",
+        "Tailwind CSS"
+      ],
+      "imageUrl": "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=600&q=80",
+      "liveUrl": "",
+      "githubUrl": "",
+      "featured": true,
+      "createdAt": "2026-01-20"
+    },
+    {
+      "id": "proj-2",
+      "title": "Astrology Consultation Portal",
+      "category": "AI-Assisted Portal",
+      "description": "A verified astrology seeker workflow with registration, owner approval, email notifications, and AI-assisted consultations.",
+      "longDescription": "The astrology portal lets users register birth details, sign in securely, wait for owner verification, and submit consultation questions once approved. It now avoids plaintext password storage, returns sanitized user profiles, and uses signed session tokens for protected consultation access.",
+      "techStack": [
+        "React",
+        "Express",
+        "Gemini API",
+        "Nodemailer"
+      ],
+      "imageUrl": "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=600&q=80",
+      "liveUrl": "",
+      "githubUrl": "",
+      "featured": true,
+      "createdAt": "2026-03-15"
+    },
+    {
+      "id": "proj-3",
+      "title": "Neumorphic CMS Interface",
+      "category": "UI / UX Design",
+      "description": "A soft-shadow dashboard system with responsive editing panels, media management, and portfolio previews.",
+      "longDescription": "The interface explores a neumorphic visual style across public portfolio sections and dense CMS controls. It focuses on readable forms, owner workflows, reusable upload controls, and responsive layouts that work across desktop and mobile screens.",
+      "techStack": [
+        "React",
+        "Tailwind CSS",
+        "Lucide Icons",
+        "Responsive Design"
+      ],
+      "imageUrl": "https://images.unsplash.com/photo-1502082553048-f009c37129b9?auto=format&fit=crop&w=600&q=80",
+      "liveUrl": "",
+      "featured": false,
+      "createdAt": "2025-11-05"
+    }
+  ],
+  "blogs": [
+    {
+      "id": "blog-1",
+      "title": "Designing Smart CMS Workflows with Server-Side Gemini API",
+      "excerpt": "Explore how backend-secured language models can elevate the CMS editor experience with smart suggestions and automated tagging.",
+      "content": "## The Evolution of Content Management Systems\n\nTraditional content management platforms require creators to input metadata, choose tags, translate copy manually, and rewrite abstracts. By bringing server-side AI directly into the publication pipeline via the **Gemini API** on port 3000, we can streamline this complex workflow:\n\n1. **Auto-Tagging**: Let the model read your markdown payload and return five distinct semantic tags.\n2. **Text Refinement & Translation**: Provide an interactive \"expand/compress\" system directly in the text editor.\n3. **Draft Starters**: Generate initial outlines based on keywords.\n\n### Implementing in React + Node\nUsing the new `@google/genai` SDK on the server, setting up server-side AI is secure and standard:\n\n```ts\nimport { GoogleGenAI } from \"@google/genai\";\n\nconst ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });\nconst response = await ai.models.generateContent({\n  model: 'gemini-3.5-flash',\n  contents: \"Summarize this article: ...\"\n});\n```\n\nWith server proxy routes, you ensure your key never leaks to the client! This is fundamental for modern web design.",
+      "imageUrl": "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=600&q=80",
+      "tags": [
+        "AI",
+        "Web Dev",
+        "Gemini"
+      ],
+      "publishedAt": "2026-05-10",
+      "readTime": "4 min read",
+      "published": true
+    },
+    {
+      "id": "blog-2",
+      "title": "Building Fluid Bento Layouts",
+      "excerpt": "A deep dive into grid systems, rhythm, typography pairing, and visual density in custom portfolio websites.",
+      "content": "## Grid Alignment & Fluid Layouts\n\nBento grids have taken modern portfolio designs by storm. They provide structured, asymmetrical compartments to display different kinds of media like text blocks, charts, images, and tools.\n\n### Why Bento Rules?\n- **High-Density Display**: Showing multiple metrics (stats, social links, tools) without overwhelming vertical lists.\n- **Micro-interactions**: Hover effects fit beautifully into defined visual boxes.\n- **Visual Rhythm**: Balancing margins, tracking, and paddings.\n\n### Tailwind Layout Recipes\nTo implement a beautiful dynamic bento on mobile, use a single column that elevates to a multi-column layout on larger screens:\n\n```html\n<div class=\"grid grid-cols-1 md:grid-cols-3 gap-6\">\n  <div class=\"md:col-span-2 p-6 bg-stone-50 rounded-2xl\">\n    <!-- Main spotlight card -->\n  </div>\n  <div class=\"p-6 bg-stone-50 rounded-2xl\">\n    <!-- Utility box -->\n  </div>\n</div>\n```\n",
+      "imageUrl": "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=600&q=80",
+      "tags": [
+        "Design",
+        "TailwindCSS",
+        "UX"
+      ],
+      "publishedAt": "2026-04-18",
+      "readTime": "6 min read",
+      "published": true
+    }
+  ],
+  "experiences": [
+    {
+      "id": "exp-1",
+      "role": "Full-Stack Developer & CMS Builder",
+      "company": "Akash Portfolio Studio",
+      "period": "2024 - Present",
+      "description": "Building owner-editable portfolio systems, CMS workflows, secure Express APIs, and responsive React interfaces."
+    },
+    {
+      "id": "exp-2",
+      "role": "Frontend UI/UX Designer",
+      "company": "Freelance & Academic Projects",
+      "period": "2022 - 2024",
+      "description": "Designed and implemented responsive layouts, visual identity systems, and interactive web components for portfolio and dashboard experiences."
+    }
+  ],
+  "education": [
+    {
+      "id": "edu-1",
+      "degree": "Computer Science & Web Development",
+      "institution": "Self-directed Study and Coursework",
+      "period": "2022 - Present"
+    }
+  ],
+  "astrologyUsers": [
+    {
+      "id": "user_1779736677577_346",
+      "name": "akash barai",
+      "email": "akasbarai560@gmail.com",
+      "passwordHash": "scrypt:WvdU-l-JN2k-TSI1VBwTQg:hTCfpTcMcgfpvvr94f-4bFmZRtzURYaJG5nEOza5dF3vJNtrklnWIs-GYyJZHnMObcBIBjvKPcbh7o8sFlAqTw",
+      "birthdate": "2003-10-08",
+      "birthdateAd": "2003-10-08",
+      "birthdateBs": "2060-06-21 BS",
+      "birthplace": "bhairahawa",
+      "birthtime": "01:02",
+      "rasi": "Vrishabh (Taurus)",
+      "isVerified": true,
+      "createdAt": "2026-05-25T19:17:57.672Z",
+      "consultations": []
+    }
+  ],
+  "schemaVersion": 2
+}

@@ -1,8 +1,6 @@
 {
-  "name": "Akash Prasad Barai Portfolio",
-  "description": "A high-end, responsive portfolio for a BSc. CSIT student featuring project highlights, technical skills, and a built-in Gemini-powered AI assistant.",
-  "requestFramePermissions": [
-    "camera",
-    "microphone"
-  ]
+  "name": "Personal Portfolio CMS",
+  "description": "A beautiful, responsive personal portfolio and blog with an in-app CMS and Gemini AI sidekick to help write and refine posts.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }
