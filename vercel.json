@@ -1,9 +1,12 @@
 {
-  "installCommand": "npm install --prefix frontend && npm install --prefix backend",
-  "buildCommand": "npm run build",
+  "installCommand": "npm ci --prefix frontend && npm ci --prefix backend",
+  "buildCommand": "npm run build --prefix frontend",
   "outputDirectory": "frontend/dist",
   "functions": {
-    "api/**/*.js": {
+    "api/index.js": {
+      "maxDuration": 10
+    },
+    "api/[...path].js": {
       "maxDuration": 10
     }
   },

@@ -83,4 +83,4 @@ CLIENT_URL=https://your-vercel-domain.vercel.app
 
 MongoDB is required for a deployed CMS because serverless filesystem storage is not persistent.
 
-The root `index.html` is the original static source. The working CMS-powered app lives in `frontend/` and is served through Vite.
+The working app lives in `frontend/` and is served through Vite. The old root `index.html` static portfolio file has been removed.

@@ -6,6 +6,7 @@ import { messageStorageFile, readJsonFile, writeJsonFile } from "../utils/fileSt
 
 const router = express.Router();
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const isServerless = Boolean(process.env.VERCEL);
 
 function cleanText(value, maxLength) {
   return String(value || "").trim().slice(0, maxLength);
@@ -43,11 +44,20 @@ async function writeStoredMessages(messages) {
   await writeJsonFile(messageStorageFile, messages);
 }
 
+function requirePersistentMessageStore() {
+  if (isServerless && !isDatabaseReady()) {
+    const error = new Error("MongoDB is required to store messages on Vercel.");
+    error.status = 503;
+    throw error;
+  }
+}
+
 router.post("/", async (req, res, next) => {
   try {
     const payload = validateMessagePayload(req.body);
 
     if (!isDatabaseReady()) {
+      requirePersistentMessageStore();
       const messages = await readStoredMessages();
       const entry = {
         _id: crypto.randomUUID(),
@@ -88,6 +98,7 @@ router.patch("/:id", requireAuth, async (req, res, next) => {
     }
 
     if (!isDatabaseReady()) {
+      requirePersistentMessageStore();
       const messages = await readStoredMessages();
       const index = messages.findIndex((entry) => entry._id === req.params.id);
 
@@ -121,6 +132,7 @@ router.patch("/:id", requireAuth, async (req, res, next) => {
 router.delete("/:id", requireAuth, async (req, res, next) => {
   try {
     if (!isDatabaseReady()) {
+      requirePersistentMessageStore();
       const messages = await readStoredMessages();
       const nextMessages = messages.filter((entry) => entry._id !== req.params.id);
 

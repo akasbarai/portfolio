@@ -4,6 +4,7 @@ import { isDatabaseReady } from "../config/db.js";
 import { contentStorageFile, readJsonFile, writeJsonFile } from "./fileStore.js";
 
 let cachedFileContent;
+const isServerless = Boolean(process.env.VERCEL);
 
 function clone(value) {
   return JSON.parse(JSON.stringify(value));
@@ -40,7 +41,7 @@ export async function ensureDefaultContent() {
     const storedContent = await readJsonFile(contentStorageFile, defaultContent);
     cachedFileContent = normalizeContent(storedContent);
 
-    if (JSON.stringify(storedContent) !== JSON.stringify(cachedFileContent)) {
+    if (!isServerless && JSON.stringify(storedContent) !== JSON.stringify(cachedFileContent)) {
       await writeJsonFile(contentStorageFile, cachedFileContent);
     }
 
@@ -69,7 +70,7 @@ export async function getContent() {
     );
     cachedFileContent = normalizeContent(storedContent);
 
-    if (JSON.stringify(storedContent) !== JSON.stringify(cachedFileContent)) {
+    if (!isServerless && JSON.stringify(storedContent) !== JSON.stringify(cachedFileContent)) {
       await writeJsonFile(contentStorageFile, cachedFileContent);
     }
 
@@ -93,6 +94,12 @@ export async function updateContent(nextContent, adminId) {
   }
 
   if (!isDatabaseReady()) {
+    if (isServerless) {
+      const error = new Error("MongoDB is required to save CMS content on Vercel.");
+      error.status = 503;
+      throw error;
+    }
+
     cachedFileContent = normalizeContent(nextContent);
     await writeJsonFile(contentStorageFile, cachedFileContent);
     return clone(cachedFileContent);
