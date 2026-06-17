@@ -92,3 +92,49 @@ export async function authenticateAdmin(email, password) {
 
   return { admin };
 }
+
+export async function changeAdminPassword(adminId, currentPassword, newPassword) {
+  if (!currentPassword || !newPassword) {
+    const error = new Error("Current password and new password are required.");
+    error.status = 400;
+    throw error;
+  }
+
+  if (newPassword.length < 8) {
+    const error = new Error("New password must be at least 8 characters.");
+    error.status = 400;
+    throw error;
+  }
+
+  if (!isDatabaseReady() || adminId === "env-admin") {
+    const error = new Error("Password changes require the MongoDB-backed CMS account.");
+    error.status = 503;
+    throw error;
+  }
+
+  const admin = await Admin.findById(adminId);
+  if (!admin) {
+    const error = new Error("Admin account was not found.");
+    error.status = 404;
+    throw error;
+  }
+
+  const validPassword = await bcrypt.compare(currentPassword, admin.passwordHash);
+  if (!validPassword) {
+    const error = new Error("Current password is incorrect.");
+    error.status = 401;
+    throw error;
+  }
+
+  const samePassword = await bcrypt.compare(newPassword, admin.passwordHash);
+  if (samePassword) {
+    const error = new Error("Choose a new password that is different from the current password.");
+    error.status = 400;
+    throw error;
+  }
+
+  admin.passwordHash = await bcrypt.hash(newPassword, 12);
+  await admin.save();
+
+  return { admin };
+}

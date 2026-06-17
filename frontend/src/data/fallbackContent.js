@@ -7,6 +7,7 @@ export const fallbackContent = {
     secondaryColor: "#48d5c4",
     availability: "Available for freelance and full-time product work",
     location: "Toronto, Canada",
+    logoUrl: "",
     resumeUrl: "#",
     cmsNote: "Every public section is editable from the CMS."
   },

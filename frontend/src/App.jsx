@@ -18,6 +18,7 @@ import {
   Hash,
   Github,
   GraduationCap,
+  Home,
   Image,
   Instagram,
   LayoutDashboard,
@@ -43,6 +44,7 @@ import {
   Trash2,
   Type,
   Upload,
+  UserRound,
   Twitter,
   X
 } from "lucide-react";
@@ -85,6 +87,7 @@ const iconMap = {
   Hash,
   Github,
   GraduationCap,
+  Home,
   Image,
   Instagram,
   LayoutDashboard,
@@ -110,9 +113,23 @@ const iconMap = {
   Trash2,
   Type,
   Upload,
+  UserRound,
   Twitter,
   X
 };
+
+const navIconByLabel = {
+  home: "Home",
+  about: "UserRound",
+  skills: "Code2",
+  work: "BriefcaseBusiness",
+  services: "Sparkles",
+  contact: "Mail"
+};
+
+function getNavIconName(label) {
+  return navIconByLabel[String(label || "").trim().toLowerCase()] || "Radio";
+}
 
 function asArray(value) {
   return Array.isArray(value) ? value : [];
@@ -155,7 +172,7 @@ function isLongTextKey(key) {
 }
 
 function isImageKey(key) {
-  return /image|avatar|portrait|background|photo|thumbnail/i.test(String(key));
+  return /image|avatar|portrait|background|photo|thumbnail|logo/i.test(String(key));
 }
 
 function isUrlKey(key) {
@@ -193,12 +210,17 @@ function loadImage(src) {
   });
 }
 
-async function imageFileToDataUrl(file) {
+async function imageFileToDataUrl(file, options = {}) {
   const maxFileSize = 8 * 1024 * 1024;
   const maxDimension = 1800;
+  const allowedTypes = options.allowedTypes || [];
 
   if (!file?.type?.startsWith("image/")) {
     throw new Error("Choose an image file.");
+  }
+
+  if (allowedTypes.length > 0 && !allowedTypes.includes(file.type)) {
+    throw new Error(options.typeError || "Choose a supported image file.");
   }
 
   if (file.size > maxFileSize) {
@@ -296,6 +318,17 @@ function externalProps(href) {
   return { target: "_blank", rel: "noopener noreferrer" };
 }
 
+function BrandMark({ content, href = "#home", label = "Go to home", className = "" }) {
+  const logoUrl = content.settings?.logoUrl;
+  const fallbackLetter = content.hero?.name?.slice(0, 1) || "M";
+
+  return (
+    <a className={`brand-mark ${className}`.trim()} href={href} aria-label={label}>
+      {logoUrl ? <img src={logoUrl} alt="" /> : fallbackLetter}
+    </a>
+  );
+}
+
 function setPath(source, path, value) {
   const copy = structuredClone(source);
   const keys = path.split(".");
@@ -375,9 +408,7 @@ function PortfolioApp() {
   return (
     <div className="portfolio-shell" style={style}>
       <header className="site-header">
-        <a className="brand-mark" href="#home" aria-label="Go to home">
-          {content.hero?.name?.slice(0, 1) || "M"}
-        </a>
+        <BrandMark content={content} />
 
         <button
           className="icon-button menu-button"
@@ -390,8 +421,9 @@ function PortfolioApp() {
 
         <nav className="desktop-nav" aria-label="Main navigation">
           {asArray(content.navigation).map((item) => (
-            <a key={item.href} href={item.href}>
-              {item.label}
+            <a key={item.href} href={item.href} title={item.label}>
+              <IconGlyph name={getNavIconName(item.label)} size={21} />
+              <span>{item.label}</span>
             </a>
           ))}
         </nav>
@@ -415,12 +447,15 @@ function PortfolioApp() {
             </button>
             {asArray(content.navigation).map((item) => (
               <a key={item.href} href={item.href} onClick={() => setMenuOpen(false)}>
+                <IconGlyph name={getNavIconName(item.label)} size={20} />
                 {item.label}
               </a>
             ))}
           </motion.div>
         )}
       </AnimatePresence>
+
+      <ProfilePanel content={content} />
 
       <main>
         <section className="hero-section" id="home">
@@ -689,6 +724,56 @@ function PortfolioApp() {
   );
 }
 
+function ProfilePanel({ content }) {
+  return (
+    <aside className="profile-panel" aria-label="Profile summary">
+      <img
+        className="profile-avatar"
+        src={content.hero?.portraitUrl}
+        alt={content.hero?.name || "Portfolio owner"}
+      />
+      <div className="profile-heading">
+        <h2>{content.hero?.name}</h2>
+        <span>{content.hero?.eyebrow}</span>
+      </div>
+      <div className="profile-socials" aria-label="Social links">
+        {asArray(content.socials).map((social) => (
+          <a key={social.label} href={social.url} aria-label={social.label} {...externalProps(social.url)}>
+            <IconGlyph name={social.icon} size={18} />
+          </a>
+        ))}
+      </div>
+      <div className="profile-contact-list">
+        <a href={`mailto:${content.contact?.email}`}>
+          <Mail size={18} />
+          <span>
+            <small>Email</small>
+            {content.contact?.email}
+          </span>
+        </a>
+        <a href={`tel:${content.contact?.phone}`}>
+          <Phone size={18} />
+          <span>
+            <small>Phone</small>
+            {content.contact?.phone}
+          </span>
+        </a>
+        <span>
+          <MapPin size={18} />
+          <span>
+            <small>Location</small>
+            {content.settings?.location}
+          </span>
+        </span>
+      </div>
+      <a className="primary-button profile-resume" href={content.settings?.resumeUrl || "#"}>
+        <FileDown size={18} />
+        Download CV
+      </a>
+    </aside>
+  );
+}
+
 function SectionIntro({ kicker, title }) {
   return (
     <div className="section-intro">
@@ -915,11 +1000,17 @@ function AdminApp() {
     return <AdminLogin onLogin={(token) => setTokenState(token)} />;
   }
 
-  return <AdminDashboard token={tokenState} onLogout={() => setTokenState(null)} />;
+  return (
+    <AdminDashboard
+      token={tokenState}
+      onTokenChange={(token) => setTokenState(token)}
+      onLogout={() => setTokenState(null)}
+    />
+  );
 }
 
 function AdminLogin({ onLogin }) {
-  const [form, setForm] = useState({ email: "admin@example.com", password: "change-me-now" });
+  const [form, setForm] = useState({ email: "admin@example.com", password: "" });
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
 
@@ -952,6 +1043,7 @@ function AdminLogin({ onLogin }) {
             value={form.email}
             onChange={(event) => setForm({ ...form, email: event.target.value })}
             type="email"
+            autoComplete="username"
             required
           />
         </label>
@@ -961,6 +1053,7 @@ function AdminLogin({ onLogin }) {
             value={form.password}
             onChange={(event) => setForm({ ...form, password: event.target.value })}
             type="password"
+            autoComplete="current-password"
             required
           />
         </label>
@@ -974,7 +1067,7 @@ function AdminLogin({ onLogin }) {
   );
 }
 
-function AdminDashboard({ token, onLogout }) {
+function AdminDashboard({ token, onTokenChange, onLogout }) {
   const [content, setContent] = useState(fallbackContent);
   const [draft, setDraft] = useState(fallbackContent);
   const [activeKey, setActiveKey] = useState("overview");
@@ -1070,9 +1163,7 @@ function AdminDashboard({ token, onLogout }) {
   return (
     <main className="cms-shell">
       <aside className="cms-sidebar">
-        <a className="brand-mark cms-mark" href="/" aria-label="Open portfolio">
-          {draft.hero?.name?.slice(0, 1) || "M"}
-        </a>
+        <BrandMark content={draft} href="/" label="Open portfolio" className="cms-mark" />
         <button
           className={activeKey === "overview" ? "cms-nav active" : "cms-nav"}
           type="button"
@@ -1099,6 +1190,14 @@ function AdminDashboard({ token, onLogout }) {
         >
           <Braces size={18} />
           Raw JSON
+        </button>
+        <button
+          className={activeKey === "account" ? "cms-nav active" : "cms-nav"}
+          type="button"
+          onClick={() => setActiveKey("account")}
+        >
+          <Lock size={18} />
+          Account
         </button>
       </aside>
 
@@ -1140,6 +1239,8 @@ function AdminDashboard({ token, onLogout }) {
 
         {activeKey === "overview" ? (
           <OverviewEditor draft={draft} setDraft={setDraft} onReset={resetToDefault} />
+        ) : activeKey === "account" ? (
+          <PasswordPanel token={token} onTokenChange={onTokenChange} onStatus={setStatus} />
         ) : activeKey === "raw" ? (
           <JsonSectionEditor
             key={activeKey}
@@ -1169,6 +1270,122 @@ function AdminDashboard({ token, onLogout }) {
   );
 }
 
+function PasswordPanel({ token, onTokenChange, onStatus }) {
+  const [form, setForm] = useState({
+    currentPassword: "",
+    newPassword: "",
+    confirmPassword: ""
+  });
+  const [busy, setBusy] = useState(false);
+  const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
+
+  function updateField(event) {
+    setForm((current) => ({ ...current, [event.target.name]: event.target.value }));
+  }
+
+  async function submit(event) {
+    event.preventDefault();
+    setMessage("");
+    setError("");
+
+    if (form.newPassword.length < 8) {
+      setError("New password must be at least 8 characters.");
+      return;
+    }
+
+    if (form.newPassword !== form.confirmPassword) {
+      setError("New password and confirmation do not match.");
+      return;
+    }
+
+    setBusy(true);
+    onStatus("Updating password");
+
+    try {
+      const data = await api("/auth/password", {
+        method: "PATCH",
+        body: {
+          currentPassword: form.currentPassword,
+          newPassword: form.newPassword
+        },
+        token
+      });
+
+      if (data.token) {
+        setToken(data.token);
+        onTokenChange(data.token);
+      }
+
+      setForm({ currentPassword: "", newPassword: "", confirmPassword: "" });
+      setMessage(data.message || "Password updated.");
+      onStatus("Password updated");
+    } catch (requestError) {
+      setError(requestError.message);
+      onStatus(requestError.message);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <section className="cms-panel account-panel">
+      <div className="panel-heading">
+        <div>
+          <span className="eyebrow">Account</span>
+          <h2>Change CMS password</h2>
+        </div>
+      </div>
+
+      <form className="cms-form-grid password-form" onSubmit={submit}>
+        <label className="cms-field wide">
+          <span>Current password</span>
+          <input
+            name="currentPassword"
+            value={form.currentPassword}
+            onChange={updateField}
+            type="password"
+            autoComplete="current-password"
+            required
+          />
+        </label>
+        <label className="cms-field">
+          <span>New password</span>
+          <input
+            name="newPassword"
+            value={form.newPassword}
+            onChange={updateField}
+            type="password"
+            autoComplete="new-password"
+            minLength={8}
+            required
+          />
+        </label>
+        <label className="cms-field">
+          <span>Confirm new password</span>
+          <input
+            name="confirmPassword"
+            value={form.confirmPassword}
+            onChange={updateField}
+            type="password"
+            autoComplete="new-password"
+            minLength={8}
+            required
+          />
+        </label>
+        <div className="cms-field wide">
+          <button className="primary-button" type="submit" disabled={busy}>
+            <Save size={17} />
+            {busy ? "Updating" : "Update Password"}
+          </button>
+          {message && <p className="form-note success">{message}</p>}
+          {error && <p className="form-note error">{error}</p>}
+        </div>
+      </form>
+    </section>
+  );
+}
+
 function OverviewEditor({ draft, setDraft, onReset }) {
   function update(path, value) {
     setDraft((current) => setPath(current, path, value));
@@ -1192,6 +1409,11 @@ function OverviewEditor({ draft, setDraft, onReset }) {
           label="Site title"
           value={draft.settings?.siteTitle}
           onChange={(value) => update("settings.siteTitle", value)}
+        />
+        <CmsImageField
+          label="Logo"
+          value={draft.settings?.logoUrl}
+          onChange={(value) => update("settings.logoUrl", value)}
         />
         <CmsField
           label="Location"
@@ -1258,6 +1480,54 @@ function OverviewEditor({ draft, setDraft, onReset }) {
         />
       </div>
     </section>
+  );
+}
+
+function CmsImageField({ label, value = "", onChange }) {
+  const [uploadError, setUploadError] = useState("");
+
+  async function upload(event) {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+    if (!file) return;
+
+    try {
+      setUploadError("");
+      const nextDataUrl = await imageFileToDataUrl(file, {
+        allowedTypes: ["image/jpeg", "image/png"],
+        typeError: "Choose a JPG or PNG image."
+      });
+      onChange(nextDataUrl);
+    } catch (error) {
+      setUploadError(error.message);
+    }
+  }
+
+  return (
+    <label className="cms-field wide cms-image-field">
+      <span>{label}</span>
+      <input
+        value={value || ""}
+        onChange={(event) => onChange(event.target.value)}
+        type="url"
+        placeholder="Paste logo URL or upload JPG/PNG"
+      />
+      <div className="image-upload-row">
+        <label className="ghost-button compact-button image-upload-button">
+          <Upload size={16} />
+          Choose JPG/PNG
+          <input type="file" accept="image/jpeg,image/png" onChange={upload} />
+        </label>
+        {value && (
+          <button className="ghost-button compact-button" type="button" onClick={() => onChange("")}>
+            <X size={16} />
+            Clear
+          </button>
+        )}
+      </div>
+      {uploadError && <p className="form-note error">{uploadError}</p>}
+      {value && <img className="field-image-preview logo-preview" src={value} alt={`${label} preview`} />}
+    </label>
   );
 }
 

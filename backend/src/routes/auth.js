@@ -1,5 +1,6 @@
 import express from "express";
-import { authenticateAdmin, signAdminToken } from "../utils/admin.js";
+import { requireAuth } from "../middleware/auth.js";
+import { authenticateAdmin, changeAdminPassword, signAdminToken } from "../utils/admin.js";
 
 const router = express.Router();
 
@@ -17,6 +18,21 @@ router.post("/login", async (req, res, next) => {
         email: admin.email,
         role: admin.role
       }
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.patch("/password", requireAuth, async (req, res, next) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+    const { admin } = await changeAdminPassword(req.admin.sub, currentPassword, newPassword);
+    const token = signAdminToken(admin);
+
+    res.json({
+      message: "Password updated.",
+      token
     });
   } catch (error) {
     next(error);
