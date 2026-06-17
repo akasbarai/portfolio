@@ -14,7 +14,7 @@ npm run dev
 
 Frontend: `http://localhost:5173`
 
-CMS: `http://localhost:5173/admin`
+CMS: `http://localhost:5173/DonChandu`
 
 Backend API: `http://localhost:5000/api`
 

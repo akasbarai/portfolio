@@ -346,7 +346,7 @@ function usePortfolioContent() {
 }
 
 function App() {
-  const adminPath = window.location.pathname.startsWith("/admin");
+  const adminPath = window.location.pathname === "/DonChandu" || window.location.pathname === "/DonChandu/";
   return adminPath ? <AdminApp /> : <PortfolioApp />;
 }
 
@@ -427,7 +427,7 @@ function PortfolioApp() {
           <div
             className="hero-media"
             style={{
-              backgroundImage: `linear-gradient(90deg, rgba(14,15,18,.94), rgba(14,15,18,.62), rgba(14,15,18,.24)), url(${content.hero?.backgroundUrl})`
+              backgroundImage: `url(${content.hero?.backgroundUrl})`
             }}
           />
           <div className="hero-grid page-grid">
@@ -437,7 +437,14 @@ function PortfolioApp() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.55 }}
             >
-              <span className="eyebrow">{content.hero?.eyebrow}</span>
+              <div className="hero-kicker-row">
+                <span className="eyebrow">{content.hero?.eyebrow}</span>
+                <span className="hero-location">
+                  <MapPin size={15} />
+                  {content.settings?.location}
+                </span>
+              </div>
+              <span className="hero-name">{content.hero?.name}</span>
               <h1>{content.hero?.title}</h1>
               <p>{content.hero?.summary}</p>
               <div className="hero-actions">
@@ -450,6 +457,18 @@ function PortfolioApp() {
                   Resume
                 </a>
               </div>
+              <div className="hero-socials" aria-label="Social links">
+                {asArray(content.socials).map((social) => (
+                  <a
+                    key={social.label}
+                    href={social.url}
+                    aria-label={social.label}
+                    {...externalProps(social.url)}
+                  >
+                    <IconGlyph name={social.icon} size={18} />
+                  </a>
+                ))}
+              </div>
             </motion.div>
 
             <motion.div
@@ -459,6 +478,10 @@ function PortfolioApp() {
               transition={{ delay: 0.1, duration: 0.5 }}
             >
               <img src={content.hero?.portraitUrl} alt={content.hero?.name || "Portfolio owner"} />
+              <div className="portrait-caption">
+                <strong>{content.hero?.name}</strong>
+                <span>{content.hero?.eyebrow}</span>
+              </div>
               <div className="availability-pill">
                 <Radio size={16} />
                 {content.settings?.availability}
@@ -564,6 +587,13 @@ function PortfolioApp() {
                   </div>
                   <h3>{project.title}</h3>
                   <p>{project.summary}</p>
+                  {asArray(project.metrics).length > 0 && (
+                    <div className="metric-row">
+                      {asArray(project.metrics).map((metric) => (
+                        <span key={metric}>{metric}</span>
+                      ))}
+                    </div>
+                  )}
                   <button
                     className="text-button"
                     type="button"
@@ -643,9 +673,6 @@ function PortfolioApp() {
               </a>
             ))}
           </div>
-          <a className="admin-link" href="/admin">
-            CMS
-          </a>
         </div>
       </footer>
 
