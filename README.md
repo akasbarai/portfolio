@@ -67,20 +67,44 @@ When MongoDB is connected, the backend creates the first admin automatically. In
 npm run build
 ```
 
-## Vercel Deployment
+## Production Deployment
 
-This repo includes `vercel.json` so Vercel builds `frontend/dist` and routes `/api/*` to the serverless Express API in `api/`.
+This repo is configured for a split deployment:
 
-Set these Vercel environment variables before using the deployed CMS:
+- Vercel builds and serves the React/Vite frontend from `frontend/dist`.
+- Render runs the Express backend from `backend/`.
+- Vercel proxies `/api/*` requests to the Render backend, so the frontend can keep using `/api`.
+
+The planned Render backend URL is:
+
+```bash
+https://akasbarai-portfolio-backend.onrender.com
+```
+
+Create the backend on Render from `render.yaml`. During the Blueprint setup, enter these secret environment variables:
 
 ```bash
 MONGO_URI=your-mongodb-atlas-uri
-JWT_SECRET=replace-with-a-long-secret
 ADMIN_EMAIL=admin@example.com
 ADMIN_PASSWORD=use-a-real-password
-CLIENT_URL=https://your-vercel-domain.vercel.app
 ```
 
-MongoDB is required for a deployed CMS because serverless filesystem storage is not persistent.
+`JWT_SECRET` is generated automatically by Render from `render.yaml`.
+
+If you later use a custom frontend domain outside `*.vercel.app`, add it to Render as:
+
+```bash
+CLIENT_URL=https://your-custom-domain.com
+```
+
+MongoDB is strongly recommended for the deployed CMS. Without `MONGO_URI`, Render's filesystem fallback is not reliable for persistent CMS edits.
+
+For Vercel, use the root repo with the included `vercel.json`:
+
+```bash
+Install Command: npm ci --prefix frontend
+Build Command: npm run build --prefix frontend
+Output Directory: frontend/dist
+```
 
 The working app lives in `frontend/` and is served through Vite. The old root `index.html` static portfolio file has been removed.

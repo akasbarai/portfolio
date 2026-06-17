@@ -1,24 +1,16 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "installCommand": "npm ci --prefix frontend && npm ci --prefix backend",
+  "installCommand": "npm ci --prefix frontend",
   "buildCommand": "npm run build --prefix frontend",
   "outputDirectory": "frontend/dist",
-  "functions": {
-    "api/index.js": {
-      "maxDuration": 10
-    },
-    "api/[...path].js": {
-      "maxDuration": 10
-    }
-  },
   "rewrites": [
     {
       "source": "/api",
-      "destination": "/api/index.js"
+      "destination": "https://akasbarai-portfolio-backend.onrender.com/api"
     },
     {
-      "source": "/api/(.*)",
-      "destination": "/api/[...path].js"
+      "source": "/api/:path*",
+      "destination": "https://akasbarai-portfolio-backend.onrender.com/api/:path*"
     },
     {
       "source": "/(.*)",
