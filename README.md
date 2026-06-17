@@ -67,4 +67,20 @@ When MongoDB is connected, the backend creates the first admin automatically. In
 npm run build
 ```
 
+## Vercel Deployment
+
+This repo includes `vercel.json` so Vercel builds `frontend/dist` and routes `/api/*` to the serverless Express API in `api/`.
+
+Set these Vercel environment variables before using the deployed CMS:
+
+```bash
+MONGO_URI=your-mongodb-atlas-uri
+JWT_SECRET=replace-with-a-long-secret
+ADMIN_EMAIL=admin@example.com
+ADMIN_PASSWORD=use-a-real-password
+CLIENT_URL=https://your-vercel-domain.vercel.app
+```
+
+MongoDB is required for a deployed CMS because serverless filesystem storage is not persistent.
+
 The root `index.html` is the original static source. The working CMS-powered app lives in `frontend/` and is served through Vite.
