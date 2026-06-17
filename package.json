@@ -2,6 +2,7 @@
   "name": "advanced-mern-portfolio",
   "version": "1.0.0",
   "private": true,
+  "type": "module",
   "description": "Split MERN portfolio with a flexible CMS dashboard.",
   "scripts": {
     "install:all": "npm install --prefix backend && npm install --prefix frontend",
@@ -11,5 +12,8 @@
   },
   "devDependencies": {
     "concurrently": "^9.2.1"
+  },
+  "overrides": {
+    "shell-quote": "1.8.4"
   }
 }

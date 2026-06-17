@@ -3,6 +3,7 @@ import { dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const storageDirectory = fileURLToPath(new URL("../../storage/", import.meta.url));
+const isServerless = Boolean(process.env.VERCEL);
 
 export const contentStorageFile = fileURLToPath(
   new URL("../../storage/content.json", import.meta.url)
@@ -31,6 +32,8 @@ export async function readJsonFile(filePath, fallbackValue) {
     }
 
     const fallback = clone(fallbackValue);
+    if (isServerless) return fallback;
+
     await writeJsonFile(filePath, fallback);
     return fallback;
   }

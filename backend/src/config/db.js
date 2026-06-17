@@ -1,5 +1,16 @@
 import mongoose from "mongoose";
 
+const isServerless = Boolean(process.env.VERCEL);
+
+function getConnectTimeout() {
+  const configuredTimeout = Number(process.env.MONGO_CONNECT_TIMEOUT_MS);
+  if (Number.isFinite(configuredTimeout) && configuredTimeout > 0) {
+    return configuredTimeout;
+  }
+
+  return isServerless ? 5000 : 10000;
+}
+
 export async function connectToDatabase() {
   const uri = process.env.MONGO_URI;
 
@@ -8,8 +19,23 @@ export async function connectToDatabase() {
     return false;
   }
 
+  if (mongoose.connection.readyState === 1) {
+    return true;
+  }
+
+  if (mongoose.connection.readyState === 2) {
+    await mongoose.connection.asPromise();
+    return true;
+  }
+
   try {
-    await mongoose.connect(uri);
+    const timeout = getConnectTimeout();
+    await mongoose.connect(uri, {
+      maxPoolSize: isServerless ? 5 : 10,
+      serverSelectionTimeoutMS: timeout,
+      connectTimeoutMS: timeout,
+      socketTimeoutMS: 15000
+    });
     console.log("MongoDB connected");
     return true;
   } catch (error) {
