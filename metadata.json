@@ -1,6 +1,0 @@
-{
-  "name": "Personal Portfolio CMS",
-  "description": "A beautiful, responsive personal portfolio and blog with an in-app CMS and Gemini AI sidekick to help write and refine posts.",
-  "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
-}

@@ -1,37 +1,70 @@
-# Personal Portfolio CMS
+# Flexible MERN Portfolio CMS
 
-A React, Vite, Tailwind, and Express portfolio app with an owner-only CMS, local image uploads, server-side Gemini helpers, and an astrology consultation portal.
+This project is a split MERN portfolio with a full visual CMS:
 
-## Run Locally
+- `frontend/` - React + Vite portfolio and CMS dashboard
+- `backend/` - Express + MongoDB API for content, auth, and contact messages
 
-Prerequisite: Node.js 22 or newer.
+## Quick Start
 
-1. Install dependencies:
-   `npm install`
-2. Copy `.env.example` to `.env.local` and fill in:
-   `OWNER_PORTAL_PASSWORD`, `SESSION_SECRET`, and optionally `GEMINI_API_KEY`.
-3. Start the app:
-   `npm run dev`
-4. Open:
-   `http://localhost:3000`
+```bash
+npm run install:all
+npm run dev
+```
 
-If port `3000` or `24678` is already busy, either stop the existing Node process or change `PORT` / `HMR_PORT` in `.env.local`.
+Frontend: `http://localhost:5173`
 
-## Scripts
+CMS: `http://localhost:5173/admin`
 
-- `npm run dev` starts the Express server with Vite middleware.
-- `npm run build` builds the Vite app and bundles the server to `dist/server.cjs`.
-- `npm run start` runs the production build.
-- `npm run lint` runs TypeScript checks.
-- `npm run clean` removes build output.
+Backend API: `http://localhost:5000/api`
 
-## Security Notes
+The frontend calls `/api` by default. In development, Vite proxies that to the backend, so the CMS works from `localhost` and local network URLs. Set `VITE_API_URL` only if your API is hosted on a separate domain.
 
-- The owner portal has no hardcoded fallback password. Set `OWNER_PORTAL_PASSWORD`.
-- Session tokens are signed with `SESSION_SECRET`; use a long random value.
-- Astrology passwords are hashed on registration. Any older plaintext entries are migrated after a successful login.
-- Uploaded files are limited to JPG, PNG, WebP, and GIF images under 8MB.
+## CMS Features
 
-## Persistence
+- Edit portfolio text, images, links, colors, navigation, projects, skills, services, testimonials, and contact details.
+- Image fields accept either a URL or a local image chosen from your computer.
+- Add, duplicate, reorder, and delete list items from visual controls.
+- Add custom fields to any object or list item.
+- Use `customSections` to create new visible portfolio sections without changing code.
+- Use Raw JSON mode when you need complete low-level control.
+- Read, archive, and delete contact messages from the dashboard.
 
-Portfolio and astrology records are stored in `my-portfolio/backend/portfolio-db.json` with atomic writes for local use. For a real multi-user deployment, move this data behind SQLite, PostgreSQL, Supabase, Firebase, or another managed database.
+## Data Storage
+
+MongoDB is optional for local use.
+
+- With `MONGO_URI`, content, admins, and messages are stored in MongoDB.
+- Without `MONGO_URI`, the backend now stores CMS data in files:
+  - `backend/storage/content.json`
+  - `backend/storage/messages.json`
+
+This means CMS edits survive server restarts even when MongoDB is not configured.
+
+## Default CMS Login
+
+For local development, the fallback login is:
+
+```bash
+admin@example.com
+change-me-now
+```
+
+Before deploying, copy `backend/.env.example` to `backend/.env` and set strong values:
+
+```bash
+ADMIN_EMAIL=admin@example.com
+ADMIN_PASSWORD=use-a-real-password
+JWT_SECRET=replace-with-a-long-secret
+MONGO_URI=mongodb://127.0.0.1:27017/advanced_portfolio
+```
+
+When MongoDB is connected, the backend creates the first admin automatically. In production, `JWT_SECRET`, `ADMIN_EMAIL`, and `ADMIN_PASSWORD` must be configured.
+
+## Build
+
+```bash
+npm run build
+```
+
+The root `index.html` is the original static source. The working CMS-powered app lives in `frontend/` and is served through Vite.
